@@ -12,7 +12,7 @@ Part II - Design and Implementation of an Interrupts Simulator
 git clone https://github.com/natebabyak/SYSC4001_A1.git
 ```
 
-#### 2. Build the
+#### 2. Build the object file
 
 ```sh
 source build.sh
@@ -67,3 +67,7 @@ source build.sh; ./bin/interrupts testcases/trace_4.txt vector_table.txt device_
 ```sh
 source build.sh; ./bin/interrupts testcases/trace_5.txt vector_table.txt device_table.txt; cat execution.txt
 ```
+
+### Python
+
+#### 1. Create virtual environment

@@ -7,13 +7,11 @@
 
 #include <interrupts.hpp>
 
-#define NEGLIGIBLE_TIME 1
-#define SAVE_RESTORE_CONTEXT_TIME 30
+#define SAVE_RESTORE_CONTEXT_TIME 10
 #define ISR_ACTIVITY_TIME 40
 
 int main(int argc, char **argv)
 {
-
     // vectors is a C++ std::vector of strings that contain the address of the ISR
     // delays  is a C++ std::vector of ints that contain the delays of each device
     // the index of these elemens is the device number, starting from 0
@@ -40,34 +38,34 @@ int main(int argc, char **argv)
 
     auto handleSyscall = [&](int device)
     {
-        log(NEGLIGIBLE_TIME, "switch to kernel mode");
+        log(1, "switch to kernel mode");
 
         log(SAVE_RESTORE_CONTEXT_TIME, "context saved");
 
-        log(NEGLIGIBLE_TIME, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
+        log(1, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
 
-        log(NEGLIGIBLE_TIME, "obtain ISR address");
+        log(1, "obtain ISR address");
 
         log(ISR_ACTIVITY_TIME, "call device driver");
 
-        log(NEGLIGIBLE_TIME, "IRET");
+        log(1, "IRET");
     };
 
     auto handleEndIo = [&](int device)
     {
         log(delays[device], "end of I/O " + std::to_string(device) + ": interrupt");
 
-        log(NEGLIGIBLE_TIME, "switch to kernel mode");
+        log(1, "switch to kernel mode");
 
         log(SAVE_RESTORE_CONTEXT_TIME, "context saved");
 
-        log(NEGLIGIBLE_TIME, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
+        log(1, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
 
-        log(NEGLIGIBLE_TIME, "obtain ISR address");
+        log(1, "obtain ISR address");
 
         log(ISR_ACTIVITY_TIME, "call device driver");
 
-        log(NEGLIGIBLE_TIME, "IRET");
+        log(1, "IRET");
     };
 
     /******************************************************************/
