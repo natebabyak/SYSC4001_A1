@@ -1,15 +1,24 @@
 import os
 
-path = 'output_files'
+INPUT_DIR = "input_files/testcases"
+OUTPUT_DIR = "output_files"
+
+SAVE_RESTORE_CONTEXT_TIMES = [10, 20, 30]
+ISR_ACTIVITY_TIMES = [40, 80, 120, 160, 200]
 
 
 def main():
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     overhead_time = 0
     program_time = 0
 
-    for file in os.scandir(path):
-        with open(file, "r") as f:
-            lines = f.readlines()
+    return
+
+    for entry in os.scandir(path):
+        with open(entry, "r") as file:
+            lines = file.readlines()
 
             for line in lines:
                 values = line.split()

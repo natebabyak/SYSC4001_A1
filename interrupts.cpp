@@ -40,8 +40,10 @@ int main(int argc, char **argv)
         auto [exec, curr] = intr_boilerplate(current_time, device, SAVE_RESTORE_CONTEXT_TIME, vectors);
         execution += exec;
         current_time = curr;
+        
+        log(ISR_ACTIVITY_TIME, "SYSCALL: run the ISR");
 
-        log(delays[device], "SYSCALL: run the ISR");
+        log(delays[device], "complete I/O task");
         
         log(1, "IRET");
     };
@@ -52,7 +54,9 @@ int main(int argc, char **argv)
         execution += exec;
         current_time = curr;
 
-        log(delays[device], "END_IO");
+        log(ISR_ACTIVITY_TIME, "END_IO");
+
+        log(delays[device], "complete I/O task");
 
         log(1, "IRET");
     };

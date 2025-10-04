@@ -71,3 +71,19 @@ source build.sh; ./bin/interrupts testcases/trace_5.txt vector_table.txt device_
 ### Python
 
 #### 1. Create virtual environment
+
+```sh
+python -m venv venv
+```
+
+#### 2. Activate virtual environment
+
+```sh
+venv/scripts/activate
+```
+
+#### 3. Run `main.py` script
+
+```sh
+python main.py
+```
