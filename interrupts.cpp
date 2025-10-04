@@ -23,26 +23,26 @@ int main(int argc, char **argv)
 
     /******************ADD YOUR VARIABLES HERE*************************/
 
-    int currentTime = 0;
+    int current_time = 0;
 
     auto log = [&](int duration, std::string event)
     {
-        execution += std::to_string(currentTime) + ", " + std::to_string(duration) + ", " + event + '\n';
-        currentTime += duration;
+        execution += std::to_string(current_time) + ", " + std::to_string(duration) + ", " + event + '\n';
+        current_time += duration;
     };
 
-    auto handleCpu = [&](int duration)
+    auto handleSyscall = [&](int intr_num)
     {
-        log(duration, "CPU burst");
-    };
+        std::pair<std::string, int> res =  intr_boilerplate(current_time, intr_num, SAVE_RESTORE_CONTEXT_TIME, vectors);
 
-    auto handleSyscall = [&](int device)
-    {
+        execution += res.first;
+        current_time = res.second;
+
         log(1, "switch to kernel mode");
 
         log(SAVE_RESTORE_CONTEXT_TIME, "context saved");
 
-        log(1, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
+        log(1, "find vector " + std::to_string(intr_num) + " in memory position " + std::to_string(intr_num * 2));
 
         log(1, "obtain ISR address");
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
         if (activity == "CPU")
         {
-            handleCpu(duration_intr);
+            log(duration_intr, "CPU burst");
         }
         else if (activity == "SYSCALL")
         {
