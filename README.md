@@ -12,7 +12,7 @@ Part II - Design and Implementation of an Interrupts Simulator
 git clone https://github.com/natebabyak/SYSC4001_A1.git
 ```
 
-#### 2. Build the object file
+#### 2. Compile the project
 
 ```sh
 source build.sh

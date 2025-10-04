@@ -25,45 +25,34 @@ int main(int argc, char **argv)
 
     int current_time = 0;
 
-    auto log = [&](int duration, std::string event)
+    auto log = [&](int duration, std::string activity)
     {
-        execution += std::to_string(current_time) + ", " + std::to_string(duration) + ", " + event + '\n';
+        execution += std::to_string(current_time) + ", " + std::to_string(duration) + ", " + activity + '\n';
         current_time += duration;
     };
 
-    auto handleSyscall = [&](int intr_num)
+    auto handle_cpu = [&](int duration) {
+        log(duration, "CPU burst");
+    };
+
+    auto handle_syscall = [&](int device)
     {
-        std::pair<std::string, int> res =  intr_boilerplate(current_time, intr_num, SAVE_RESTORE_CONTEXT_TIME, vectors);
+        auto [exec, curr] = intr_boilerplate(current_time, device, SAVE_RESTORE_CONTEXT_TIME, vectors);
+        execution += exec;
+        current_time = curr;
 
-        execution += res.first;
-        current_time = res.second;
-
-        log(1, "switch to kernel mode");
-
-        log(SAVE_RESTORE_CONTEXT_TIME, "context saved");
-
-        log(1, "find vector " + std::to_string(intr_num) + " in memory position " + std::to_string(intr_num * 2));
-
-        log(1, "obtain ISR address");
-
-        log(ISR_ACTIVITY_TIME, "call device driver");
-
+        log(delays[device], "SYSCALL: run the ISR");
+        
         log(1, "IRET");
     };
 
-    auto handleEndIo = [&](int device)
+    auto handle_end_io = [&](int device)
     {
-        log(delays[device], "end of I/O " + std::to_string(device) + ": interrupt");
+        auto [exec, curr] = intr_boilerplate(current_time, device, SAVE_RESTORE_CONTEXT_TIME, vectors);
+        execution += exec;
+        current_time = curr;
 
-        log(1, "switch to kernel mode");
-
-        log(SAVE_RESTORE_CONTEXT_TIME, "context saved");
-
-        log(1, "find vector " + std::to_string(device) + " in memory position " + std::to_string(device * 2));
-
-        log(1, "obtain ISR address");
-
-        log(ISR_ACTIVITY_TIME, "call device driver");
+        log(delays[device], "END_IO");
 
         log(1, "IRET");
     };
@@ -79,15 +68,15 @@ int main(int argc, char **argv)
 
         if (activity == "CPU")
         {
-            log(duration_intr, "CPU burst");
+            handle_cpu(duration_intr);
         }
         else if (activity == "SYSCALL")
         {
-            handleSyscall(duration_intr);
+            handle_syscall(duration_intr);
         }
         else if (activity == "END_IO")
         {
-            handleEndIo(duration_intr);
+            handle_end_io(duration_intr);
         }
 
         /************************************************************************/
