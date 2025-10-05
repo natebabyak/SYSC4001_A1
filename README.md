@@ -45,7 +45,7 @@ for context in 10 20 30; do
 
     source build.sh;
 
-    for ((trace=1; trace<=5; trace++)); do
+    for ((trace=1; trace<=20; trace++)); do
         ./bin/interrupts input_files/trace_${trace}.txt vector_table.txt device_table.txt
         mv execution.txt output_files/execution_context_${context}_${trace}.txt
     done
@@ -67,7 +67,7 @@ for activity in 40 120 200; do
 
     source build.sh;
 
-    for ((trace=1; trace<=5; trace++)); do
+    for ((trace=1; trace<=20; trace++)); do
         ./bin/interrupts input_files/trace_${trace}.txt vector_table.txt device_table.txt
         mv execution.txt output_files/execution_activity_${activity}_${trace}.txt
     done
