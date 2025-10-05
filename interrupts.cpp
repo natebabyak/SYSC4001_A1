@@ -40,11 +40,30 @@ int main(int argc, char **argv)
         auto [exec, curr] = intr_boilerplate(current_time, device, SAVE_RESTORE_CONTEXT_TIME, vectors);
         execution += exec;
         current_time = curr;
-        
-        log(ISR_ACTIVITY_TIME, "SYSCALL: run the ISR");
 
-        log(delays[device], "complete I/O task");
-        
+        int remaining_time = delays[device];
+
+        if (remaining_time >= ISR_ACTIVITY_TIME) {
+            log(ISR_ACTIVITY_TIME, "SYSCALL: run the ISR (device driver)");
+            remaining_time -= ISR_ACTIVITY_TIME;
+        } else if (remaining_time > 0) {
+            log(remaining_time, "SYSCALL: run the ISR (device driver)");
+            remaining_time = 0;
+        }
+
+        if (remaining_time >= ISR_ACTIVITY_TIME) {
+            log(ISR_ACTIVITY_TIME, "transfer data from device to memory");
+            remaining_time -= ISR_ACTIVITY_TIME;
+        } else if (remaining_time > 0) {
+            log(remaining_time, "transfer data from device to memory");
+            remaining_time = 0;
+        }
+
+        if (remaining_time > 0) {
+            log(remaining_time, "check for errors");
+            remaining_time = 0;
+        }
+
         log(1, "IRET");
     };
 
@@ -54,10 +73,21 @@ int main(int argc, char **argv)
         execution += exec;
         current_time = curr;
 
-        log(ISR_ACTIVITY_TIME, "END_IO");
+        int remaining_time = delays[device];
 
-        log(delays[device], "complete I/O task");
+        if (remaining_time >= ISR_ACTIVITY_TIME) {
+            log(ISR_ACTIVITY_TIME, "ENDIO: run the ISR (device driver)");
+            remaining_time -= ISR_ACTIVITY_TIME;
+        } else if (remaining_time > 0) {
+            log(remaining_time, "ENDIO: run the ISR (device driver)");
+            remaining_time = 0;
+        }
 
+        if (remaining_time > 0) {
+            log(remaining_time, "check device status");
+            remaining_time = 0;
+        }
+        
         log(1, "IRET");
     };
 

@@ -21,7 +21,7 @@ source build.sh
 #### 3. Run the simulation
 
 ```sh
-./bin/interrupts trace.txt vector_table.txt device_table.txt
+./bin/interrupts input_files/trace.txt vector_table.txt device_table.txt
 ```
 
 #### 4. Check the results
@@ -30,60 +30,48 @@ source build.sh
 cat execution.txt
 ```
 
-### Running simulations
+### Running Simulations
 
-#### trace.txt
+#### 1. Run simulations with varying context times
 
 ```sh
-source build.sh; ./bin/interrupts trace.txt vector_table.txt device_table.txt; cat execution.txt
+mkdir -p output_files
+
+sed -i "10s/.*/#define SAVE_RESTORE_CONTEXT_TIME 10/" interrupts.cpp
+sed -i "11s/.*/#define ISR_ACTIVITY_TIME 40/" interrupts.cpp
+
+for context in 10 20 30; do
+    sed -i "10s/.*/#define SAVE_RESTORE_CONTEXT_TIME $context/" interrupts.cpp
+
+    source build.sh;
+
+    for ((trace=1; trace<=5; trace++)); do
+        ./bin/interrupts input_files/trace_${trace}.txt vector_table.txt device_table.txt
+        mv execution.txt output_files/execution_context_${context}_${trace}.txt
+    done
+done
+
+sed -i "10s/.*/#define SAVE_RESTORE_CONTEXT_TIME 10/" interrupts.cpp
 ```
 
-#### trace_1.txt
+#### 2. Run simulations with varying activity times
 
 ```sh
-source build.sh; ./bin/interrupts testcases/trace_1.txt vector_table.txt device_table.txt; cat execution.txt
-```
+mkdir -p output_files
 
-#### trace_2.txt
+sed -i "10s/.*/#define SAVE_RESTORE_CONTEXT_TIME 10/" interrupts.cpp
+sed -i "11s/.*/#define ISR_ACTIVITY_TIME 40/" interrupts.cpp
 
-```sh
-source build.sh; ./bin/interrupts testcases/trace_2.txt vector_table.txt device_table.txt; cat execution.txt
-```
+for activity in 40 120 200; do
+    sed -i "11s/.*/#define ISR_ACTIVITY_TIME $activity/" interrupts.cpp
 
-#### trace_3.txt
+    source build.sh;
 
-```sh
-source build.sh; ./bin/interrupts testcases/trace_3.txt vector_table.txt device_table.txt; cat execution.txt
-```
+    for ((trace=1; trace<=5; trace++)); do
+        ./bin/interrupts input_files/trace_${trace}.txt vector_table.txt device_table.txt
+        mv execution.txt output_files/execution_activity_${activity}_${trace}.txt
+    done
+done
 
-#### trace_4.txt
-
-```sh
-source build.sh; ./bin/interrupts testcases/trace_4.txt vector_table.txt device_table.txt; cat execution.txt
-```
-
-#### trace_5.txt
-
-```sh
-source build.sh; ./bin/interrupts testcases/trace_5.txt vector_table.txt device_table.txt; cat execution.txt
-```
-
-### Python
-
-#### 1. Create virtual environment
-
-```sh
-python -m venv venv
-```
-
-#### 2. Activate virtual environment
-
-```sh
-venv/scripts/activate
-```
-
-#### 3. Run `main.py` script
-
-```sh
-python main.py
+sed -i "11s/.*/#define ISR_ACTIVITY_TIME 40/" interrupts.cpp
 ```
