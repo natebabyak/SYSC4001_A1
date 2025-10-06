@@ -87,7 +87,7 @@ std::vector<std::string> split_delim(std::string input, std::string delim) {
 }
 
 std::tuple<std::string, int> parse_trace(std::string trace) {
-    //split line by ','
+    // split line by ','
     auto parts = split_delim(trace, ",");
     if (parts.size() < 2) {
         std::cerr << "Error: Malformed input line: " << trace << std::endl;
@@ -100,9 +100,8 @@ std::tuple<std::string, int> parse_trace(std::string trace) {
     return {activity, duration_intr};
 }
 
-//Default interrupt boilerplate
+// Default interrupt boilerplate
 std::pair<std::string, int> intr_boilerplate(int current_time, int intr_num, int context_save_time, std::vector<std::string> vectors) {
-
     std::string execution = "";
 
     execution += std::to_string(current_time) + ", " + std::to_string(1) + ", switch to kernel mode\n";
@@ -115,8 +114,7 @@ std::pair<std::string, int> intr_boilerplate(int current_time, int intr_num, int
     sprintf(vector_address_c, "0x%04X", (ADDR_BASE + (intr_num * VECTOR_SIZE)));
     std::string vector_address(vector_address_c);
 
-    execution += std::to_string(current_time) + ", " + std::to_string(1) + ", find vector " + std::to_string(intr_num) 
-                    + " in memory position " + vector_address + "\n";
+    execution += std::to_string(current_time) + ", " + std::to_string(1) + ", find vector " + std::to_string(intr_num) + " in memory position " + vector_address + "\n";
     current_time++;
 
     execution += std::to_string(current_time) + ", " + std::to_string(1) + ", load address " + vectors.at(intr_num) + " into the PC\n";
@@ -124,7 +122,6 @@ std::pair<std::string, int> intr_boilerplate(int current_time, int intr_num, int
 
     return std::make_pair(execution, current_time);
 }
-
 
 void write_output(std::string execution) {
     std::ofstream output_file("execution.txt");
@@ -139,4 +136,5 @@ void write_output(std::string execution) {
 
     std::cout << "Output generated in execution.txt" << std::endl;
 }
+
 #endif
